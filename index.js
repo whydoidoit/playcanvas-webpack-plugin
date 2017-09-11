@@ -51,9 +51,10 @@ PlayCanvasWebpackPlugin.prototype.apply = function (compiler) {
                             contentType: "text/javascript"
                         })
                         req.then(() => {
-                            compilation.messages.push("Upload complete for file " + filename.path)
+                            console.log("Upload complete for file " + filename.path)
                             callback()
                         }, (e) => {
+                            console.error(e)
                             compilation.errors.push(e)
                             callback()
                         })
