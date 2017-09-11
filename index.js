@@ -1,4 +1,3 @@
-
 const _ = require('lodash')
 const request = require('request-promise')
 
@@ -8,14 +7,15 @@ function PlayCanvasWebpackPlugin(options) {
     }, options)
 }
 
-PlayCanvasWebpackPlugin.prototype.apply = function(compiler) {
+PlayCanvasWebpackPlugin.prototype.apply = function (compiler) {
     let options = this.options
-    compiler.plugin('emit', (compilation, callback)=>{
-        if(options.skipUpload) {
-            callback()
-            return
-        }
+    compiler.plugin('emit', (compilation, callback) => {
         try {
+            if (options.skipUpload) {
+                compilation.messages.push("Skipping upload")
+                callback()
+                return
+            }
             Object.keys(compilation.assets)
                 .forEach(key => {
                     let asset = compilation.assets[key]
@@ -31,48 +31,37 @@ PlayCanvasWebpackPlugin.prototype.apply = function(compiler) {
                         if (!options.bearer) {
                             throw new Error("No bearer token, aborting")
                         }
-
-                        console.log("\nUpload", filename.path)
+                        compilation.messages.push("Uploading " + filename.path + " to PlayCanvas")
                         let content = asset.children.map(c => c._value ? c._value : c).join('\n')
-                        if (options.legacy) {
-                            request({
-                                uri: `https://playcanvas.com/api/projects/${options.project}/repositories/directory/sourcefiles/${filename.path}`,
-                                method: 'PUT',
-                                json: true,
-                                headers: {
-                                    "Authorization": `Bearer ${options.bearer}`
-                                },
-                                body: {
-                                    content,
-                                    filename
-                                }
-                            }).then(() => callback(), () => callback())
-                        } else {
-                            let req = request({
-                                uri: `https://playcanvas.com/api/assets`,
-                                method: 'POST',
-                                headers: {
-                                    "Authorization": `Bearer ${options.bearer}`
-                                }
-                            })
-                            let form = req.form()
-                            form.append("project", "" + options.project)
-                            form.append("name", "" + filename.path)
-                            form.append("asset", "" + filename.assetId)
-                            form.append("data", JSON.stringify({order: filename.priority || 100, scripts: {}}))
-                            form.append("preload", "true")
-                            form.append("file", content, {
-                                filename: filename.path,
-                                contentType: "text/javascript"
-                            })
-                            req.then(() => callback(), (e) => {
-                                throw new Error(e)
-                            })
-                        }
+                        let req = request({
+                            uri: `https://playcanvas.com/api/assets`,
+                            method: 'POST',
+                            headers: {
+                                "Authorization": `Bearer ${options.bearer}`
+                            }
+                        })
+                        let form = req.form()
+                        form.append("project", "" + options.project)
+                        form.append("name", "" + filename.path)
+                        form.append("asset", "" + filename.assetId)
+                        form.append("data", JSON.stringify({order: filename.priority || 100, scripts: {}}))
+                        form.append("preload", "true")
+                        form.append("file", content, {
+                            filename: filename.path,
+                            contentType: "text/javascript"
+                        })
+                        req.then(() => {
+                            compilation.messages.push("Upload complete for file " + filename.path)
+                            callback()
+                        }, (e) => {
+                            compilation.errors.push(e)
+                            callback()
+                        })
+
 
                     }
                 })
-        } catch(e) {
+        } catch (e) {
             compilation.errors.push(e)
             callback()
         }
