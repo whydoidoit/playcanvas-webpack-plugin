@@ -66,8 +66,7 @@ PlayCanvasWebpackPlugin.prototype.apply = function(compiler) {
                                 contentType: "text/javascript"
                             })
                             req.then(() => callback(), (e) => {
-                                console.error(e)
-                                callback()
+                                throw new Error(e)
                             })
                         }
 
