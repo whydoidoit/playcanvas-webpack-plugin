@@ -12,7 +12,7 @@ PlayCanvasWebpackPlugin.prototype.apply = function (compiler) {
     compiler.plugin('emit', (compilation, callback) => {
         try {
             if (options.skipUpload) {
-                compilation.messages.push("Skipping upload")
+                console.log("Skipping Upload")
                 callback()
                 return
             }
@@ -31,7 +31,7 @@ PlayCanvasWebpackPlugin.prototype.apply = function (compiler) {
                         if (!options.bearer) {
                             throw new Error("No bearer token, aborting")
                         }
-                        compilation.messages.push("Uploading " + filename.path + " to PlayCanvas")
+                        console.log("Uploading " + filename.path + " to PlayCanvas")
                         let content = asset.children.map(c => c._value ? c._value : c).join('\n')
                         let req = request({
                             uri: `https://playcanvas.com/api/assets`,
