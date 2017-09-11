@@ -21,6 +21,19 @@ PlayCanvasWebpackPlugin.prototype.apply = function(compiler) {
                 if(!asset || !asset.children) return
                 let filename = options.files[key]
                 if(filename) {
+                    if(!options.project) {
+                        console.warn("No project, aborting " + filename.path)
+                        return
+                    }
+                    if(!filename.assetId) {
+                        console.warn("No assetId aborting " + filename.path)
+                        return
+                    }
+                    if(!options.bearer) {
+                        console.error("No bearer token, aborting")
+                        return
+                    }
+
                     console.log("\nUpload", filename.path)
                     let content = asset.children.map(c=>c._value ? c._value : c).join('\n')
                     if(options.legacy) {
