@@ -70,3 +70,6 @@ module.exports = {
 }
 
 ```
+
+You can use an additional option of `skipUpload` if you want to have conditional build
+logic to not upload your output files.
