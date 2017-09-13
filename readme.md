@@ -54,8 +54,8 @@ module.exports = {
         
         new PlayCanvasWebpackPlugin({
             
-            bearer: 'YOUR_BEARER_TOKEN',          // From your organisation API tokens (or network tab in dev tools)
-            project: YOUR_PROJECT_ID,             // From the url of the launch page of your project
+            bearer: 'YOUR_BEARER_TOKEN',          // From the step above
+            project: YOUR_PROJECT_ID,             // From the step above
             files: {
                 "your_build.output.js": {         //Name of your build output
                     path: "your_build.output.js", //Name in PlayCanvas, normally the same
