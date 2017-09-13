@@ -4,7 +4,7 @@ WebPack plugin to upload built script files to PlayCanvas.
 
 ### Installation
 
-```language-shell
+```shell
 npm install --save playcanvas-webpack-plugin
 ```
 
@@ -27,7 +27,7 @@ the bearer token and the project id.
 7. In your webpack config add the plugin and configure its options:
 
 
-```language-javascript
+```javascript
 
 var PlayCanvasWebpackPlugin = require('playcanvas-webpack-plugin')
 
