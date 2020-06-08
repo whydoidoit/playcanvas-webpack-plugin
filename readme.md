@@ -12,17 +12,19 @@ npm install --save playcanvas-webpack-plugin
 
 1. Build your WebPack output one time.
 
-2. Go to the PlayCanvas editor for your project on the web and open your developer tools.
+2. Go to your account settings and scroll down to API Tokens and generate a new one.
 
-3. Drop the build file into the assets window.
+2. Go to the project overview page and copy the project id from the URL.
 
-4. In the javascript console type config.accessToken - use this as your bearer token later
+3. Go to the PlayCanvas editor for your project on the web.
 
-5. In the javascript console type config.project.id - use this as your project id later
+4. Go to version control and note the branch id of the current/wanted branch.
+
+5. Drop the build file into the assets window.
 
 6. Select the build file you dropped in the assets window of the PlayCanvas editor and note its
 Asset Id in the properties panel.  Use this in your WebPack configuration along with 
-the bearer token and the project id.
+the API token, branch id and the project id.
 
 7. In your webpack config add the plugin and configure its options:
 
@@ -56,6 +58,7 @@ module.exports = {
             
             bearer: 'YOUR_BEARER_TOKEN',          // From the step above
             project: YOUR_PROJECT_ID,             // From the step above
+            branchid: YOUR_BRANCH_ID,             // From the step above
             files: {
                 "your_build.output.js": {         //Name of your build output
                     path: "your_build.output.js", //Name in PlayCanvas, normally the same
