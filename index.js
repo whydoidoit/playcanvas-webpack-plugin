@@ -34,29 +34,53 @@ PlayCanvasWebpackPlugin.prototype.apply = function (compiler) {
                         console.log("Uploading " + filename.path + " to PlayCanvas")
                         let content = asset.children.map(c => c._value ? c._value : c).join('\n')
                         let req = request({
-                            uri: `https://playcanvas.com/api/assets`,
-                            method: 'POST',
+                            uri: `https://playcanvas.com/api/assets/${filename.assetId}`,
+                            method: 'PUT',
                             headers: {
                                 "Authorization": `Bearer ${options.bearer}`
                             }
                         })
                         let form = req.form()
-                        form.append("project", "" + options.project)
-                        form.append("name", "" + filename.path)
-                        form.append("asset", "" + filename.assetId)
-                        form.append("data", JSON.stringify({order: filename.priority || 100, scripts: {}}))
-                        form.append("preload", "true")
+                        form.append("branchId", "" + options.branchId)
                         form.append("file", content, {
                             filename: filename.path,
                             contentType: "text/javascript"
                         })
                         req.then(() => {
-                            console.log("Upload complete for file " + filename.path)
+                            console.log("Upload complete for file (update) " + filename.path)
                             callback()
                         }, (e) => {
-                            console.error(e)
-                            compilation.errors.push(e)
-                            callback()
+                            if(e.statusCode === 404){
+                                let req = request({
+                                    uri: `https://playcanvas.com/api/assets`,
+                                    method: 'POST',
+                                    headers: {
+                                        "Authorization": `Bearer ${options.bearer}`
+                                    }
+                                })
+                                let form = req.form()
+                                form.append("name", "" + filename.path)
+                                form.append("project", "" + options.project)
+                                form.append("branchId", "" + options.branchId)
+                                form.append("preload", "true")
+                                form.append("file", content, {
+                                    filename: filename.path,
+                                    contentType: "text/javascript"
+                                })
+                                req.then((res) => {
+                                    console.log("Upload complete for file (create) " + filename.path)
+                                    compilation.warnings.push("PlayCanvas Webpack Plugin\nNew main.build.js has been created. Update assetId config to" + JSON.parse(res).id)
+                                    callback()
+                                }, (e) => {
+                                    console.error(e)
+                                    compilation.errors.push(e)
+                                    callback()
+                                })
+                            }else{
+                                console.error(e)
+                                compilation.errors.push(e)
+                                callback()
+                            }
                         })
 
 
