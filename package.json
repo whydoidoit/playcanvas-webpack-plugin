@@ -1,12 +1,14 @@
 {
   "name": "playcanvas-webpack-plugin",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "WebPack plugin to upload built script files to PlayCanvas.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Mike Talbot",
+  "author": {
+    "name": "Mike Talbot"
+  },
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.4",
@@ -25,5 +27,7 @@
   "bugs": {
     "url": "https://github.com/whydoidoit/playcanvas-webpack-plugin/issues"
   },
-  "homepage": "https://github.com/whydoidoit/playcanvas-webpack-plugin#readme"
+  "homepage": "https://github.com/whydoidoit/playcanvas-webpack-plugin#readme",
+  "bundleDependencies": false,
+  "deprecated": false
 }
